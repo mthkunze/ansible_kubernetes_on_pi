@@ -1,0 +1,27 @@
+- hosts: server
+  become: true
+  become_method: sudo
+  become_user: root
+
+  tasks:
+
+  - name: Add an Apt signing key, uses whichever key is at the URL
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present
+
+
+  - name: Add Kubernetes Repository for Debian ARM
+    shell: echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
+    args:
+      executable: /bin/bash
+
+  - name: Update Package Manager
+    shell: apt update
+    args:
+      executable: /bin/bash
+
+  - name: Update Package Manager
+    shell: apt install -y kubeadm kubelet
+    args:
+      executable: /bin/bash
