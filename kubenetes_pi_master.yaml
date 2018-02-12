@@ -1,0 +1,33 @@
+- hosts: server
+  become: true
+  become_method: sudo
+  become_user: root
+
+  tasks:
+
+# echo 'cgroup_memory=1' >> /boot/cmdline.txt
+
+  - name: Disable Swap on Pi
+    shell: swapoff -a
+    args:
+      executable: /bin/bash
+
+  - name: Setup non-root user pi to use kubectl
+    shell: mkdir -p ~pi/.kube
+    shell: cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    shell: chown pi:pi ~pi/.kube/config
+    shell: echo "export KUBECONFIG=/home/pi/.kube/config" >> ~/.bashrc
+    args:
+      executable: /bin/bash
+  - name: Init Kubernetes Manager with Pod Network on 10.244.0.0
+    shell: kubeadm init --pod-network-cidr 10.244.0.0/16
+    args:
+      executable: /bin/bash
+
+  - name: Setup non-root user pi to use kubectl
+    shell: mkdir -p ~pi/.kube
+    shell: cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    shell: chown pi:pi ~pi/.kube/config
+    shell: echo "export KUBECONFIG=/home/pi/.kube/config" >> ~/.bashrc
+    args:
+      executable: /bin/bash
